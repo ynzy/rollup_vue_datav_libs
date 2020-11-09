@@ -1,8 +1,9 @@
+import Icon from './component/Icon/index';
 import Test from './component/Test/index';
 import Test2 from './component/Test2/index';
 
 // import Test from './Test.vue';
-const components = [Test, Test2];
+const components = [Test, Test2, Icon];
 
 // will install the plugin only once
 const install = function (Vue) {
@@ -16,4 +17,4 @@ if (typeof window !== 'undefined' && window.Vue) {
 }
 
 // To allow use as module (npm/webpack/etc.) export component
-export default { install, Test, Test2 };
+export default { install, Test, Test2, Icon };
