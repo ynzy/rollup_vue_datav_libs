@@ -1,21 +1,22 @@
-import Icon from './component/Icon/index';
-import SvgAnimation from './component/SvgAnimation/index';
-import Test from './component/Test/index';
-import Test2 from './component/Test2/index';
+import Icon from './component/Icon/index'
+import SvgAnimation from './component/SvgAnimation/index'
+import Loading from './component/Loading/index'
+import Test from './component/Test/index'
+import Test2 from './component/Test2/index'
 
 // import Test from './Test.vue';
-const components = [Test, Test2, Icon, SvgAnimation];
+const components = [Test, Test2, Icon, SvgAnimation,Loading]
 
 // will install the plugin only once
-const install = function (Vue) {
+const install = function(Vue) {
   components.forEach((component) => {
-    Vue.component(component.name, component);
-  });
-};
+    Vue.component(component.name, component)
+  })
+}
 
 if (typeof window !== 'undefined' && window.Vue) {
-  install(window.Vue);
+  install(window.Vue)
 }
 
 // To allow use as module (npm/webpack/etc.) export component
-export default { install, Test, Test2, Icon, SvgAnimation };
+export default { install, Test, Test2, Icon, SvgAnimation,Loading }
