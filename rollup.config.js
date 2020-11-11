@@ -7,6 +7,8 @@ const { terser } = require('rollup-plugin-terser')
 const vue = require('rollup-plugin-vue')
 const postcss = require('rollup-plugin-postcss')
 const { eslint } = require('rollup-plugin-eslint')
+import alias from 'rollup-plugin-alias'
+
 const pathResolve = (p) => path.resolve(__dirname, p)
 
 const outputOptions = require('./rollup-output-options')
@@ -18,6 +20,11 @@ const basePlugins = [
   resolve(),
   json(),
   vue(),
+  alias({
+    entries: {
+      '@': pathResolve('src'),
+    },
+  }),
   babel({
     exclude: 'node_modules/**',
     runtimeHelpers: true, // 使plugin-transform-runtime生效

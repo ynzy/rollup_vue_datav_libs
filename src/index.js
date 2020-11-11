@@ -2,15 +2,16 @@ import Icon from './component/Icon/index'
 import SvgAnimation from './component/SvgAnimation/index'
 import Loading from './component/Loading/index'
 import FlyBox from './component/FlyBox/index'
+import Container from './component/Container/index'
 
 import Test from './component/Test/index'
 import Test2 from './component/Test2/index'
 
 // import Test from './Test.vue';
-const components = [Test, Test2, Icon, SvgAnimation, Loading, FlyBox]
+const components = [Test, Test2, Icon, SvgAnimation, Loading, FlyBox, Container]
 
 // will install the plugin only once
-const install = function(Vue) {
+const install = function (Vue) {
   components.forEach((component) => {
     Vue.component(component.name, component)
   })
@@ -21,4 +22,14 @@ if (typeof window !== 'undefined' && window.Vue) {
 }
 
 // To allow use as module (npm/webpack/etc.) export component
-export default { install, Test, Test2, Icon, SvgAnimation, Loading, FlyBox }
+export default {
+  install,
+  // Test,
+  // Test2,
+  // Icon,
+  // SvgAnimation,
+  // Loading,
+  // FlyBox,
+  // Container,
+  ...components,
+}
