@@ -76,7 +76,7 @@ export default {
       default: '#20bcfe',
     },
     duration: {
-      type: Number,
+      type: [Number, String],
       default: 2,
     },
   },

@@ -13,7 +13,16 @@
         [100,50]   => [200,200]
         [0,50]     => [0,100]
        -->
-        <rect class="rect" x="5" y="5" width="100" height="50" fill="none" stroke="blue" stroke-width="5" />
+        <rect
+          class="rect"
+          x="5"
+          y="5"
+          width="100"
+          height="50"
+          fill="none"
+          stroke="blue"
+          stroke-width="5"
+        />
       </svg>
     </div>
     <div class="container">
@@ -34,7 +43,15 @@
     </div>
     <div class="container">
       <svg width="200" height="200" viewBox="0 0 200 200">
-        <rect x="0" y="0" width="200" height="200" fill="none" stroke="grey" stroke-width="8"></rect>
+        <rect
+          x="0"
+          y="0"
+          width="200"
+          height="200"
+          fill="none"
+          stroke="grey"
+          stroke-width="8"
+        ></rect>
         <rect
           x="0"
           y="0"
@@ -59,7 +76,16 @@
     </div>
     <div class="container">
       <svg class="line-container" viewBox="0 0 400 400" width="400" height="400">
-        <line class="line" x1="0" y1="30" x2="400" y2="30" fill="none" stroke-width="20" stroke="red" />
+        <line
+          class="line"
+          x1="0"
+          y1="30"
+          x2="400"
+          y2="30"
+          fill="none"
+          stroke-width="20"
+          stroke="red"
+        />
       </svg>
     </div>
     <div class="container">
@@ -140,7 +166,12 @@
             repeatCount="2"
           />
         </rect>
-        <path id="motion-path" d="M 10 10 L 110 10 L 110 110 L 10 110 Z" fill="none" stroke="green" />
+        <path
+          id="motion-path"
+          d="M 10 10 L 110 10 L 110 110 L 10 110 Z"
+          fill="none"
+          stroke="green"
+        />
       </svg>
     </div>
     <div class="container">
@@ -183,7 +214,12 @@
             begin="red-to-blue.end + 0.5s"
           />
         </rect>
-        <path id="motion-path" d="M 10 10 L 110 10 L 110 110 L 10 110 " fill="none" stroke="green" />
+        <path
+          id="motion-path"
+          d="M 10 10 L 110 10 L 110 110 L 10 110 "
+          fill="none"
+          stroke="green"
+        />
       </svg>
     </div>
     <div class="container">
@@ -234,6 +270,37 @@
         </defs>
         <rect x="5" y="5" width="390" height="390" fill="red"></rect>
         <rect x="5" y="5" width="390" height="390" fill="blue" mask="url(#test-mask)"></rect>
+      </svg>
+    </div>
+    <div class="container">
+      <svg width="400" height="400">
+        <defs>
+          <mask id="test-mask">
+            <rect x="5" y="5" width="390" height="390" fill="red"></rect>
+            <circle r="50" cx="50" cy="50"></circle>
+          </mask>
+          <linearGradient id="test-linear-gradient">
+            <stop offset="0%" stop-color="red"></stop>
+            <stop offset="50%" stop-color="green"></stop>
+            <stop offset="100%" stop-color="blue"></stop>
+          </linearGradient>
+        </defs>
+        <rect x="5" y="5" width="390" height="390" fill="url(#test-linear-gradient)"></rect>
+      </svg>
+    </div>
+    <div class="container bg-grey">
+      <svg width="400" height="400">
+        <defs>
+          <mask id="test-mask">
+            <rect x="5" y="5" width="390" height="390" fill="red"></rect>
+            <circle r="50" cx="50" cy="50"></circle>
+          </mask>
+          <radialGradient id="test-radial-gradient" cx="50%" cy="50%" fx="50%" fy="50%" r="50%">
+            <stop offset="0%" stop-color="#fff" stop-opacity="1"></stop>
+            <stop offset="100%" stop-color="#fff" stop-opacity="0"></stop>
+          </radialGradient>
+        </defs>
+        <circle cx="200" cy="200" r="150" fill="url(#test-radial-gradient)"></circle>
       </svg>
     </div>
   </div>
@@ -337,5 +404,8 @@ export default {
       stroke-dashoffset: 0;
     }
   }
+}
+.bg-grey {
+  background: grey;
 }
 </style>
