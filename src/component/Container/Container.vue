@@ -1,12 +1,15 @@
 <!--  -->
 <template>
-  <div id="container" :ref="refName">
-    <slot></slot>
+  <div id="container" :ref="refName" :style="style">
+    <!--    <button @click="changeStyle" style="font-size: 200px">改变宽高比</button>-->
+    <template v-if="ready">
+      <slot></slot>
+    </template>
   </div>
 </template>
 
 <script>
-import { ref, getCurrentInstance, onMounted, onUnmounted, nextTick } from 'vue'
+import { ref, getCurrentInstance, onMounted, onUnmounted, nextTick, watchEffect, reactive, toRefs } from 'vue'
 import { debounce } from '@/utils/index.js'
 export default {
   name: 'Container',
@@ -19,9 +22,16 @@ export default {
     const height = ref(0) //实际高度
     const originalWidth = ref(0) // 屏幕宽度
     const originalHeight = ref(0) // 屏幕高度
+    const ready = ref(false) // 判断容器组件是否完成渲染
+    let context, dom, observer
 
-    let context = null
-    let dom = null
+    const state = reactive({ style: {} })
+    const changeStyle = () => {
+      state.style = {
+        ...state.style,
+        height: '20px',
+      }
+    }
     // 初始化获取宽高
     const initSize = () => {
       // 加入promise 优化我们initSize之后再执行updateScale
@@ -72,24 +82,50 @@ export default {
       const heightScale = currentHeight / realHeight
       dom.style.transform = `scale(${widthScale},${heightScale})`
     }
-    const onResize = async () => {
-      console.log('onResize')
+    const onResize = async (e) => {
+      console.log('onResize', e)
       await initSize()
       updateScale()
     }
+    // 监听dom树所做的更改，
+    // 当我们在外部更改了容器的样式，比如height，我们可以通过MutationObserver监听到
+    const initMutiationObserver = () => {
+      const MutationObserver = window.MutationObserver
+      observer = new MutationObserver(onResize)
+      observer.observe(dom, {
+        attributes: true,
+        attributeFilter: ['style'],
+        attributeOldValue: true,
+      })
+    }
+    const removeMutationObserver = () => {
+      if (observer) {
+        observer.disconnect()
+        observer.takeRecords()
+        observer = null
+      }
+    }
+
     onMounted(async () => {
+      ready.value = false
       context = getCurrentInstance().ctx
       await initSize()
       updateSize()
       updateScale()
       window.addEventListener('resize', debounce(100, onResize))
+      initMutiationObserver()
+      ready.value = true
     })
     onUnmounted(() => {
       window.removeEventListener('resize', onResize)
+      removeMutationObserver()
     })
 
     return {
       refName,
+      ...toRefs(state),
+      changeStyle,
+      ready,
     }
   },
 }
