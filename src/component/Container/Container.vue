@@ -1,7 +1,6 @@
 <!--  -->
 <template>
-  <div id="container" :ref="refName" :style="style">
-    <!--    <button @click="changeStyle" style="font-size: 200px">改变宽高比</button>-->
+  <div id="container" :ref="refName">
     <template v-if="ready">
       <slot></slot>
     </template>
@@ -25,13 +24,6 @@ export default {
     const ready = ref(false) // 判断容器组件是否完成渲染
     let context, dom, observer
 
-    const state = reactive({ style: {} })
-    const changeStyle = () => {
-      state.style = {
-        ...state.style,
-        height: '20px',
-      }
-    }
     // 初始化获取宽高
     const initSize = () => {
       // 加入promise 优化我们initSize之后再执行updateScale
@@ -48,7 +40,7 @@ export default {
             width.value = dom.clientWidth
             height.value = dom.clientHeight
           }
-          // 获取屏幕宽度,画布的尺寸
+          // 获取屏幕宽高,画布的尺寸
           if (!originalWidth.value || !originalHeight.value) {
             originalWidth.value = screen.width
             originalHeight.value = screen.height
@@ -83,6 +75,7 @@ export default {
       dom.style.transform = `scale(${widthScale},${heightScale})`
     }
     const onResize = async (e) => {
+      // 这里的e可以监听到MutationObserver的回调函数
       console.log('onResize', e)
       await initSize()
       updateScale()
@@ -123,8 +116,6 @@ export default {
 
     return {
       refName,
-      ...toRefs(state),
-      changeStyle,
       ready,
     }
   },
