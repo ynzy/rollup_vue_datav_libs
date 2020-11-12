@@ -1,6 +1,7 @@
-import CountTo from './vue-countTo.vue'
+import CountTo from './CountTo.vue'
+
+CountTo.install = function (Vue) {
+  Vue.component(CountTo.name, CountTo)
+}
 
 export default CountTo
-if (typeof window !== 'undefined' && window.Vue) {
-  window.Vue.component('count-to', CountTo)
-}

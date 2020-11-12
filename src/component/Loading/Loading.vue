@@ -48,7 +48,7 @@
         <animate attributeName="stroke" :values="insideColorAnimation" :dur="`${duration}s`" repeatCount="indefinite" />
       </circle>
     </svg>
-    <div class="loading-content">
+    <div class="loading-tip">
       <slot></slot>
     </div>
   </div>
@@ -92,4 +92,16 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.loading {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  .loading-tip {
+    font-size: 15px;
+  }
+}
+</style>

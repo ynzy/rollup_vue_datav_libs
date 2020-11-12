@@ -11,8 +11,10 @@ if (isServer) {
   cancelAnimationFrame = function () {
   }
 } else {
-  requestAnimationFrame = window.requestAnimationFrame
-  cancelAnimationFrame = window.cancelAnimationFrame
+  requestAnimationFrame = function () {
+  }
+  cancelAnimationFrame = function () {
+  }
   let prefix
   // 通过遍历各浏览器前缀，来得到requestAnimationFrame和cancelAnimationFrame在当前浏览器的实现形式
   for (let i = 0; i < prefixes.length; i++) {

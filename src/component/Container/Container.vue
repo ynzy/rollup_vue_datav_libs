@@ -1,22 +1,33 @@
 <!--  -->
 <template>
-  <div id="container" :ref="refName">
-    <template v-if="ready">
-      <slot></slot>
-    </template>
-  </div>
+<div id="screen-container" :ref="refName">
+  <template v-if="ready">
+    <slot></slot>
+  </template>
+</div>
 </template>
 
 <script>
-import { ref, getCurrentInstance, onMounted, onUnmounted, nextTick, watchEffect, reactive, toRefs } from 'vue'
-import { debounce } from '@/utils/index.js'
+import {
+  ref,
+  getCurrentInstance,
+  onMounted,
+  onUnmounted,
+  nextTick,
+  watchEffect,
+  reactive,
+  toRefs
+} from 'vue'
+import {
+  debounce
+} from '@/utils/index.js'
 export default {
   name: 'Container',
   props: {
     options: Object, // width height
   },
   setup(ctx) {
-    const refName = 'container'
+    const refName = 'screen-container'
     const width = ref(0) //实际宽度
     const height = ref(0) //实际高度
     const originalWidth = ref(0) // 屏幕宽度
@@ -31,7 +42,9 @@ export default {
         // nextTick 优化渲染
         nextTick(() => {
           dom = context.$refs[refName]
-          const { options } = ctx
+          const {
+            options
+          } = ctx
           // 获取设置的固定宽度。大屏的真实尺寸
           if (options?.width && options?.height) {
             width.value = options.width
@@ -45,7 +58,7 @@ export default {
             originalWidth.value = screen.width
             originalHeight.value = screen.height
           }
-          console.log(width.value, height.value, originalWidth.value, originalHeight.value)
+          // console.log(width.value, height.value, originalWidth.value, originalHeight.value)
           resolve()
         })
       })
@@ -65,7 +78,7 @@ export default {
       // 获取实际（真实）视口的尺寸
       const currentWidth = document.body.clientWidth
       const currentHeight = document.body.clientHeight
-      console.log(currentWidth, currentHeight)
+      // console.log(currentWidth, currentHeight)
       // 获取大屏最终的尺寸
       const realWidth = width.value || originalWidth.value
       const realHeight = height.value || originalHeight.value
@@ -76,7 +89,7 @@ export default {
     }
     const onResize = async (e) => {
       // 这里的e可以监听到MutationObserver的回调函数
-      console.log('onResize', e)
+      // console.log('onResize', e)
       await initSize()
       updateScale()
     }
@@ -123,7 +136,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-#container {
+#screen-container {
   position: fixed;
   top: 0;
   left: 0;

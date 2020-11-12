@@ -3,12 +3,13 @@ import SvgAnimation from './component/SvgAnimation/index'
 import Loading from './component/Loading/index'
 import FlyBox from './component/FlyBox/index'
 import Container from './component/Container/index'
+import CountTo from './component/CountTo/index'
 
 import Test from './component/Test/index'
 import Test2 from './component/Test2/index'
 
 // import Test from './Test.vue';
-const components = [Test, Test2, Icon, SvgAnimation, Loading, FlyBox, Container]
+const components = [Test, Test2, Icon, SvgAnimation, Loading, FlyBox, Container, CountTo]
 
 // will install the plugin only once
 const install = function (Vue) {
