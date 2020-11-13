@@ -1,24 +1,12 @@
 <template>
-<span>
-  {{ displayValue }}
-</span>
+  <span>
+    {{ displayValue }}
+  </span>
 </template>
 
 <script>
-import {
-  requestAnimationFrame,
-  cancelAnimationFrame
-} from './requestAnimationFrame.js'
-import {
-  reactive,
-  computed,
-  watch,
-  onMounted,
-  onUnmounted,
-  toRefs,
-  ref,
-  toRef
-} from 'vue'
+import { requestAnimationFrame, cancelAnimationFrame } from './requestAnimationFrame.js'
+import { reactive, computed, watch, onMounted, onUnmounted, toRefs, ref, toRef } from 'vue'
 export default {
   name: 'CountTo',
   props: {
@@ -116,7 +104,7 @@ export default {
       cancelAnimationFrame(state.rAF)
     })
     const start = () => {
-      state.localStartVal = state.startVal
+      state.localStartVal = props.startVal
       state.startTime = null
       state.localDuration = props.duration
       state.paused = false
@@ -142,7 +130,7 @@ export default {
       state.remaining = state.localDuration - progress
 
       if (props.useEasing) {
-        if (state.countDown) {
+        if (countDown) {
           state.printVal =
             state.localStartVal - easingFn(progress, 0, state.localStartVal - props.endVal, state.localDuration)
         } else {
@@ -154,13 +142,13 @@ export default {
           )
         }
       } else {
-        if (state.countDown) {
+        if (countDown) {
           state.printVal = state.localStartVal - (state.localStartVal - props.endVal) * (progress / state.localDuration)
         } else {
           state.printVal = state.localStartVal + (props.endVal - state.localStartVal) * (progress / state.localDuration)
         }
       }
-      if (state.countDown) {
+      if (countDown) {
         state.printVal = state.printVal < props.endVal ? props.endVal : state.printVal
       } else {
         state.printVal = state.printVal > props.endVal ? props.endVal : state.printVal
@@ -168,7 +156,7 @@ export default {
 
       state.displayValue = formatNumber(state.printVal)
       if (progress < state.localDuration) {
-        state.rAF = requestAnimationFrame(state.count)
+        state.rAF = requestAnimationFrame(count)
       } else {
         context.emit('callback')
       }

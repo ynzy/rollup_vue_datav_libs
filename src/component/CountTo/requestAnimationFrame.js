@@ -6,15 +6,11 @@ let cancelAnimationFrame
 
 const isServer = typeof window === 'undefined'
 if (isServer) {
-  requestAnimationFrame = function () {
-  }
-  cancelAnimationFrame = function () {
-  }
+  requestAnimationFrame = function () { }
+  cancelAnimationFrame = function () { }
 } else {
-  requestAnimationFrame = function () {
-  }
-  cancelAnimationFrame = function () {
-  }
+  requestAnimationFrame = window.requestAnimationFrame
+  cancelAnimationFrame = window.cancelAnimationFrame
   let prefix
   // 通过遍历各浏览器前缀，来得到requestAnimationFrame和cancelAnimationFrame在当前浏览器的实现形式
   for (let i = 0; i < prefixes.length; i++) {
@@ -23,7 +19,8 @@ if (isServer) {
     }
     prefix = prefixes[i]
     requestAnimationFrame = requestAnimationFrame || window[prefix + 'RequestAnimationFrame']
-    cancelAnimationFrame = cancelAnimationFrame || window[prefix + 'CancelAnimationFrame'] || window[prefix + 'CancelRequestAnimationFrame']
+    cancelAnimationFrame =
+      cancelAnimationFrame || window[prefix + 'CancelAnimationFrame'] || window[prefix + 'CancelRequestAnimationFrame']
   }
 
   // 如果当前浏览器不支持requestAnimationFrame和cancelAnimationFrame，则会退到setTimeout

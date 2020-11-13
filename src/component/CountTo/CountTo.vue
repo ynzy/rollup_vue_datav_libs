@@ -1,11 +1,13 @@
 <template>
-  <span>
+  <span ref="user">
     {{ displayValue }}
   </span>
 </template>
+
 <script>
 import { requestAnimationFrame, cancelAnimationFrame } from './requestAnimationFrame.js'
-
+import { onUnmounted } from 'vue'
+let rAF = null
 export default {
   name: 'CountTo',
   props: {
@@ -63,6 +65,15 @@ export default {
       default: true,
     },
   },
+  setup() {
+    // onMounted(() => {
+    //   const context = getCurrentInstance().ctx
+    //   console.log(context.rAF)
+    // })
+    onUnmounted(() => {
+      cancelAnimationFrame(rAF)
+    })
+  },
   data() {
     return {
       localStartVal: this.startVal,
@@ -112,7 +123,7 @@ export default {
       this.startTime = null
       this.localDuration = this.duration
       this.paused = false
-      this.rAF = requestAnimationFrame(this.count)
+      rAF = requestAnimationFrame(this.count)
     },
     pauseResume() {
       if (this.paused) {
@@ -124,7 +135,7 @@ export default {
       }
     },
     pause() {
-      cancelAnimationFrame(this.rAF)
+      cancelAnimationFrame(rAF)
     },
     resume() {
       this.startTime = null
@@ -134,7 +145,7 @@ export default {
     },
     reset() {
       this.startTime = null
-      cancelAnimationFrame(this.rAF)
+      cancelAnimationFrame(rAF)
       this.displayValue = this.formatNumber(this.startVal)
     },
     count(timestamp) {
@@ -170,7 +181,7 @@ export default {
 
       this.displayValue = this.formatNumber(this.printVal)
       if (progress < this.localDuration) {
-        this.rAF = requestAnimationFrame(this.count)
+        rAF = requestAnimationFrame(this.count)
       } else {
         this.$emit('callback')
       }
@@ -193,8 +204,8 @@ export default {
       return this.prefix + x1 + x2 + this.suffix
     },
   },
-  destroyed() {
-    cancelAnimationFrame(this.rAF)
-  },
+  /* destroyed() {
+    cancelAnimationFrame(rAF)
+  }, */
 }
 </script>
