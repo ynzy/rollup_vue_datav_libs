@@ -4,12 +4,13 @@ import Loading from './component/Loading/index'
 import FlyBox from './component/FlyBox/index'
 import Container from './component/Container/index'
 import CountTo from './component/CountTo/index'
+import VueEcharts from './component/VueEcharts/index'
 
 import Test from './component/Test/index'
 import Test2 from './component/Test2/index'
 
 // import Test from './Test.vue';
-const components = [Test, Test2, Icon, SvgAnimation, Loading, FlyBox, Container, CountTo]
+const components = [Test, Test2, Icon, SvgAnimation, Loading, FlyBox, Container, CountTo, VueEcharts]
 
 // will install the plugin only once
 const install = function (Vue) {

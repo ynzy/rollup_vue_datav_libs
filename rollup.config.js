@@ -58,6 +58,7 @@ let config = {
   output: outputOptions,
   //! 注意插件加载顺序
   plugins: plugins,
+  external: ['vue', 'echarts']
 }
 
 module.exports = config
