@@ -1,29 +1,46 @@
 <!-- echarts二次封装 -->
 <template>
-  <div class="echarts">234234</div>
+<div :ref="refName" class="echarts"></div>
 </template>
 
 <script>
 import Echarts from 'echarts'
-import { onMounted, watch, watchEffect, ref } from 'vue'
+import {
+  v4 as uuidv4
+} from 'uuid'
+import {
+  onMounted,
+  watch,
+  watchEffect,
+  ref,
+  getCurrentInstance
+} from 'vue'
 
 export default {
   name: 'VueEcharts',
   props: {
     options: Object,
+    theme: [String, Object],
   },
   setup(ctx) {
+    const uuid = uuidv4()
+    let refName = `echart-${uuid}`
     let dom
     let chart
+    let instance
     const initChart = () => {
       if (!chart) {
-        dom = document.querySelector('.echarts')
-        chart = Echarts.init(dom)
+        dom = instance.ctx.$refs[refName]
+        chart = Echarts.init(dom, ctx.theme)
       }
-      // onMounted完成echarts初始化之后进行设置，当我们options进行了修改，重新进行初始化
-      chart.setOption(ctx.options)
+      // console.log(ctx.options)
+      if (ctx.options) {
+        // onMounted完成echarts初始化之后进行设置，当我们options进行了修改，重新进行初始化
+        chart.setOption(ctx.options)
+      }
     }
     onMounted(() => {
+      instance = getCurrentInstance()
       initChart()
     })
     watch(
@@ -32,6 +49,9 @@ export default {
         initChart()
       },
     )
+    return {
+      refName,
+    }
   },
 }
 </script>
