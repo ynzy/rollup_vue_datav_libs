@@ -1,110 +1,75 @@
 <!--  -->
 <template>
-  <div class="fly_box" :ref="refName">
-    <svg :width="width" :height="height">
-      <defs>
-        <path :id="pathId" :d="path" fill="none" />
-        <radialGradient :id="radialGradientId" cx="50%" cy="50%" fx="100%" fy="50%" r="50%">
-          <stop offset="0%" stop-color="#fff" stop-opacity="1"></stop>
-          <stop offset="100%" stop-color="#fff" stop-opacity="0"></stop>
-        </radialGradient>
-        <mask :id="maskId">
-          <circle :r="startLength" cx="0" cy="0" :fill="`url(#${radialGradientId})`">
-            <animateMotion :dur="`${duration}s`" :path="path" rotate="auto" repeatCount="indefinite" />
-          </circle>
-        </mask>
-      </defs>
-      <use :href="`#${pathId}`" stroke-width="1" :stroke="lineColor" />
-      <use :href="`#${pathId}`" stroke-width="3" :stroke="startColor" :mask="`url(#${maskId})`" />
-    </svg>
-    <div class="fly_box_content">
-      <slot></slot>
-    </div>
-  </div>
+<svg class="logo" viewBox="0 0 1082 1024">
+  <path :stroke="stroke" :stroke-width="strokeWidth" class="logo_path" d="M533.767 0l158.995 304.74s-278.24 164.672-442.914 444.805l13.25-92.746L0.076 389.915l367.201-41.641z" p-id="2875"></path>
+  <path :stroke="stroke" :stroke-width="strokeWidth" class="logo_path" d="M232.813 819.351s384.237-577.074 849.94-433.222l-60.57 66.248s-253.634-24.606-388.022 71.926c0 0-264.991 132.496-401.272 310.418z" p-id="2876"></path>
+  <path :stroke="stroke" :stroke-width="strokeWidth" class="logo_path" d="M902.861 564.052l-81.39 79.497s-278.24 11.357-588.658 240.384c0 0 300.954-359.857 670.048-319.881z" p-id="2877"></path>
+  <path :stroke="stroke" :stroke-width="strokeWidth" class="logo_path" d="M223.35 921.79s321.774-217.672 611.37-179.816L868.792 1024 546.108 849.863l-341.61 173.91z" p-id="2878"></path>
+</svg>
 </template>
 
 <script>
-import { ref, computed, onMounted, getCurrentInstance } from 'vue'
-import { v4 as uuidv4 } from 'uuid'
+import {
+  ref,
+  computed,
+  onMounted,
+  getCurrentInstance
+} from 'vue'
+import {
+  v4 as uuidv4
+} from 'uuid'
 export default {
-  name: 'FlyBox',
+  name: 'Logo',
   props: {
-    // 边框颜色
-    lineColor: {
-      type: String,
-      default: '#235fa7',
+    strokeWidth: {
+      type: [String, Number],
+      default: 1,
     },
-    //流星颜色
-    startColor: {
+    stroke: {
       type: String,
-      default: '#4fd2dd',
-    },
-    //流星的长度
-    startLength: {
-      type: String,
-      default: '50',
-    },
-    duration: {
-      type: [Number, String],
-      default: 3,
+      default: '#000',
     },
   },
   setup(ctx) {
-    const uuid = uuidv4()
-    console.log(uuid)
-    // 动态设置宽高
-    const width = ref(0)
-    const height = ref(0)
-    const refName = 'flyBox'
-    const pathId = `${refName}-path-${uuid}`
-    const radialGradientId = `${refName}-gradient-${uuid}`
-    const maskId = `${refName}-maskId-${uuid}`
-    const path = computed(
-      () => `M5 5 L${width.value - 5} 5 L${width.value - 5} ${height.value - 5} L5 ${height.value - 5} Z`,
-    )
-    const init = () => {
-      // 由于setup是在create之前执行的，无法获取到组件的实例，通过getCurrentInstance获取组件的实例
-      const instance = getCurrentInstance()
-      const dom = instance.ctx.$refs[refName]
-      width.value = dom.clientWidth
-      height.value = dom.clientHeight
-    }
     onMounted(() => {
-      init()
+      /**
+        0 2201 以最长的为准
+        1 2035
+        2 1527
+        3 1786
+       */
+      // const logo = document.getElementsByClassName('logo_path')[3]
+      // console.dir(logo.getTotalLength())
     })
-    return {
-      width,
-      height,
-      refName,
-      path,
-      pathId,
-      radialGradientId,
-      maskId,
-    }
   },
 }
 </script>
 
 <style lang="scss" scoped>
-.fly_box {
-  position: relative;
+.logo {
   width: 100%;
   height: 100%;
-  padding: 10px;
-  box-sizing: border-box;
+}
 
-  svg {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+.logo_path {
+  fill: none;
+  animation: logo-animation 5s linear infinite forwards;
+}
+
+@keyframes logo-animation {
+  0% {
+    stroke-dasharray: 2202;
+    stroke-dashoffset: 2202;
   }
 
-  .fly_box_content {
-    width: 100%;
-    height: 100%;
-    box-sizing: border-box;
+  50% {
+    stroke-dasharray: 2202;
+    stroke-dashoffset: 0;
+  }
+
+  50% {
+    stroke-dasharray: 2202;
+    stroke-dashoffset: 0;
   }
 }
 </style>
