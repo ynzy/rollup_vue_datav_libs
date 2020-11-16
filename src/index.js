@@ -6,12 +6,7 @@ import Container from './component/Container/index'
 import CountTo from './component/CountTo/index'
 import VueEcharts from './component/VueEcharts/index'
 import Logo from './component/Logo/index'
-
-import Test from './component/Test/index'
-import Test2 from './component/Test2/index'
-
-// import Test from './Test.vue';
-const components = [Test, Test2, Icon, SvgAnimation, Loading, FlyBox, Container, CountTo, VueEcharts, Logo]
+const components = [Icon, SvgAnimation, Loading, FlyBox, Container, CountTo, VueEcharts, Logo]
 
 // will install the plugin only once
 const install = function (Vue) {
@@ -27,12 +22,5 @@ if (typeof window !== 'undefined' && window.Vue) {
 // To allow use as module (npm/webpack/etc.) export component
 export default {
   install,
-  // Test,
-  // Test2,
-  // Icon,
-  // SvgAnimation,
-  // Loading,
-  // FlyBox,
-  // Container,
   ...components,
 }
