@@ -310,6 +310,7 @@ export default {
     .base-scroll-list-rows {
       display: flex;
       font-size: 28px;
+      transition: all 0.3s linear;
       .base-scroll-list-columns {
         display: flex;
         align-items: center;
