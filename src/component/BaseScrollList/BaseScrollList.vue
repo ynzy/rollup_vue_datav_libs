@@ -195,7 +195,7 @@ export default {
       state.headerStyle = _headerStyle
       const { rowNum } = config
       // 加入两倍数据
-      if (_rowsData.length * 2 > rowNum && _rowsData.length < rowNum * 2) {
+      if (_rowsData.length * 2 >= rowNum && _rowsData.length < rowNum * 2) {
         const newRowData = [..._rowsData, ..._rowsData]
         state.rowsData = newRowData.map((item, index) => ({
           data: item,
