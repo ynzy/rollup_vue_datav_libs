@@ -7,8 +7,20 @@ import CountTo from './component/CountTo/index'
 import VueEcharts from './component/VueEcharts/index'
 import Logo from './component/Logo/index'
 import BaseScrollList from './component/BaseScrollList/index'
+import AutoScrollTable from './component/AutoScrollTable/index'
 
-const components = [Icon, SvgAnimation, Loading, FlyBox, Container, CountTo, VueEcharts, Logo, BaseScrollList]
+const components = [
+  Icon,
+  SvgAnimation,
+  Loading,
+  FlyBox,
+  Container,
+  CountTo,
+  VueEcharts,
+  Logo,
+  BaseScrollList,
+  AutoScrollTable
+]
 
 // will install the plugin only once
 const install = function (Vue) {

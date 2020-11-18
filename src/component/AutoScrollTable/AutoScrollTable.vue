@@ -1,27 +1,24 @@
-<!-- BaseScrollList组件
- -->
 <template>
   <div class="base-scroll-list" :id="id">
     <div
       class="base-scroll-list-header"
       :style="{
+        backgroundColor: actualConfig.headerBg,
         height: `${actualConfig.headerHeight}px`,
         fontSize: `${actualConfig.headerFontSize}px`,
         color: actualConfig.headerColor,
-        backgroundColor: actualConfig.headerBg,
       }"
     >
-      <!--  :align="aligns[headerIndex]" -->
       <div
         class="header-item base-scroll-list-text"
-        v-for="(headerItem, headerIndex) in headerData"
-        :key="headerIndex"
+        v-for="(headerItem, i) in headerData"
+        :key="headerItem + i"
         :style="{
-          width: `${columnWidths[headerIndex]}px`,
-          ...headerStyle[headerIndex],
+          width: `${columnWidths[i]}px`,
+          ...headerStyle[i],
         }"
         v-html="headerItem"
-        :align="aligns[headerIndex]"
+        :align="aligns[i]"
       />
     </div>
     <div
@@ -37,9 +34,9 @@
         :style="{
           height: `${rowHeights[index]}px`,
           lineHeight: `${rowHeights[index]}px`,
+          backgroundColor: rowData.rowIndex % 2 === 0 ? rowBg[1] : rowBg[0],
           fontSize: `${actualConfig.rowFontSize}px`,
           color: actualConfig.rowColor,
-          backgroundColor: rowData.rowIndex % 2 === 0 ? rowBg[1] : rowBg[0],
         }"
       >
         <div
@@ -57,36 +54,25 @@
     </div>
   </div>
 </template>
-
 <script>
-import { reactive, toRefs, watch } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { v4 as uuidv4 } from 'uuid'
 import useScreen from '@/hooks/userSceen'
-import cloneDeep from 'lodash/cloneDeep' // 按需加载，只使用cloneDeep
+import cloneDeep from 'lodash/cloneDeep'
 import assign from 'lodash/assign'
-
-// 默认配置
 const defaultConfig = {
-  // 标题数据，格式[a,b,c]
+  // 标题数据，格式：['a','b','c']
   headerData: [],
-  // 标题高度
-  headerHeight: 28,
-  // 标题样式,格式[{},{},{}]
+  // 标题样式，格式：[{},{},{}]
   headerStyle: [],
-  // 标题背景颜色
-  headerBg: '#5a5a5a',
-  // 标题字号
-  headerFontSize: 28,
-  // 标题字体颜色
-  headerColor: '#fff',
   // 行样式
   rowStyle: [],
-  // 行背景样式，格式['',''],奇偶列
+  // 行背景色
   rowBg: [],
-  // 行字号
-  rowFontSize: 20,
-  // 行字体颜色
-  rowColor: '#000',
+  // 标题的背景色
+  headerBg: 'rgb(90,90,90)',
+  // 标题的高度
+  headerHeight: 35,
   // 标题是否展示序号
   headerIndex: false,
   // 序号列标题的内容
@@ -95,7 +81,7 @@ const defaultConfig = {
   headerIndexStyle: {
     width: '50px',
   },
-  // 序号列数据的内容
+  // 序号列的内容
   headerIndexData: [],
   // 序号列内容的样式
   rowIndexStyle: {
@@ -105,15 +91,17 @@ const defaultConfig = {
   data: [],
   // 每页显示数据量
   rowNum: 10,
-  // 居中方式  center left right
+  // 居中方式
   aligns: [],
-  // 移动的位置
-  moveNum: 1,
-  // 动画间隔时间
-  duration: 2000,
+  headerFontSize: 28,
+  rowFontSize: 28,
+  headerColor: '#fff',
+  rowColor: '#000',
+  moveNum: 1, // 移动的位置
+  duration: 2000, // 动画间隔
 }
 export default {
-  name: 'BaseScrollList',
+  name: 'AutoScrollTable',
   props: {
     config: {
       type: Object,
@@ -121,28 +109,22 @@ export default {
     },
   },
   setup(props) {
-    const { config } = props
-    const state = reactive({
-      id: `base-scroll-list-${uuidv4()}`,
-      actualConfig: {}, // 合并后要配置的config
-      headerData: [], // 头部数据
-      headerStyle: [], // 头部样式
-      rowStyle: [], // 行样式
-      rowBg: [], // 行背景
-      columnWidths: [], // 每一列的宽度
-      rowsData: [], // 行 总数据
-      currentRowsData: [], // 当前展示的数据
-      currentIndex: 0, // 动画指针
-      rowHeights: [],
-      rowNum: defaultConfig.rowNum,
-      aligns: [],
-      isAnimationStart: true,
-    })
-
+    const id = `base-scroll-list-${uuidv4()}`
+    const { width, height } = useScreen(id)
+    const actualConfig = ref([])
+    const headerData = ref([])
+    const headerStyle = ref([])
+    const rowStyle = ref([])
+    const columnWidths = ref([])
+    const rowBg = ref([])
+    const rowHeights = ref([])
+    const rowsData = ref([])
+    const currentRowsData = ref([]) //
+    const currentIndex = ref(0) // 动画指针
+    const rowNum = ref(defaultConfig.rowNum)
+    const aligns = ref([])
+    const isAnimationStop = ref(false)
     let avgHeight // 行高
-    // 容器的宽高
-    const { width, height } = useScreen(state.id)
-    // 动态计算header
     const handleHeader = (config) => {
       const _headerData = cloneDeep(config.headerData)
       const _headerStyle = cloneDeep(config.headerStyle)
@@ -152,14 +134,12 @@ export default {
       if (_headerData.length === 0) {
         return
       }
-      //! 如果需要展示序号，将内容和样式分别做添加
       if (config.headerIndex) {
         _headerData.unshift(config.headerIndexContent)
         _headerStyle.unshift(config.headerIndexStyle)
         _rowStyle.unshift(config.rowIndexStyle)
         _rowsData.forEach((rows, index) => {
-          // 处理序号列的数据
-          if (config.headerIndexData.length > 0 && config.headerIndexData[index]) {
+          if (config.headerIndexData[index]) {
             rows.unshift(config.headerIndexData[index])
           } else {
             rows.unshift(index + 1)
@@ -167,9 +147,9 @@ export default {
         })
         _aligns.unshift('center')
       }
-      //! 动态计算header中每一列的宽度
-      let usedWidth = 0 // 已经使用了的宽度
-      let usedColumnNum = 0 // 定义了宽度的数据长度
+      // 动态计算header中每一列的宽度
+      let usedWidth = 0
+      let usedColumnNum = 0
       // 判断是否自定义width
       _headerStyle.forEach((style) => {
         // 如果自定义width，则按照自定义width进行渲染
@@ -179,13 +159,8 @@ export default {
         }
       })
       // 动态计算列宽时，使用剩余的宽度除以剩余的列数
-      // (总宽度 - 使用的宽度) / (数据总长度-定义了数据的长度)
       const avgWidth = (width.value - usedWidth) / (_headerData.length - usedColumnNum)
-      // 将每一列的宽度设置成一样的
-      // fill() 方法用一个固定值填充一个数组中从起始索引到终止索引内的全部元素
       const _columnWidth = new Array(_headerData.length).fill(avgWidth)
-
-      //! 对 columnWidth进行一次更新，使行数据宽度和头部标题宽度保持一致
       _headerStyle.forEach((style, index) => {
         // 如果自定义width，则按照自定义width进行渲染
         if (style.width) {
@@ -193,113 +168,115 @@ export default {
           _columnWidth[index] = headerWidth
         }
       })
-
-      state.columnWidths = _columnWidth
-      // 每次对state.headerData操作unshift都会出发一次渲染
-      // 建议使用深拷贝对象进行变更，然后再赋值
-      state.headerData = _headerData
-      state.headerStyle = _headerStyle
-      state.rowStyle = _rowStyle
-      state.aligns = _aligns
+      columnWidths.value = _columnWidth
+      headerData.value = _headerData
+      headerStyle.value = _headerStyle
+      rowStyle.value = _rowStyle
       const { rowNum } = config
-      // 加入两倍数据
       if (_rowsData.length >= rowNum && _rowsData.length < rowNum * 2) {
         const newRowData = [..._rowsData, ..._rowsData]
-        state.rowsData = newRowData.map((item, index) => ({
+        rowsData.value = newRowData.map((item, index) => ({
           data: item,
           rowIndex: index,
         }))
       } else {
-        state.rowsData = _rowsData.map((item, index) => ({
+        rowsData.value = _rowsData.map((item, index) => ({
           data: item,
           rowIndex: index,
         }))
       }
+      aligns.value = _aligns
+      // console.log(_aligns, aligns.value)
     }
-
-    // 动态计算行数据
     const handleRows = (config) => {
       // 动态计算每行数据的高度
-      const { headerHeight, rowNum } = config
-      state.rowNum = rowNum
-      const unUsedHeight = height.value - headerHeight
+      const { headerHeight } = config
+      rowNum.value = config.rowNum
+      const unusedHeight = height.value - headerHeight
       // 如果rowNum大于实际数据长度，则以实际数据长度为准
-      if (state.rowNum > state.rowsData.length) {
-        state.rowNum = state.rowsData.length
+      if (rowNum.value > rowsData.value.length) {
+        rowNum.value = rowsData.value.length
       }
-      avgHeight = unUsedHeight / state.rowNum
-      state.rowHeights = new Array(state.rowNum).fill(avgHeight)
-
+      avgHeight = unusedHeight / rowNum.value
+      rowHeights.value = new Array(rowNum.value).fill(avgHeight)
       // 获取行背景色
       if (config.rowBg) {
-        state.rowBg = config.rowBg
+        rowBg.value = config.rowBg
       }
     }
+    let a
     const startAnimation = async () => {
-      const { actualConfig, currentIndex, rowsData } = state
-      const { rowNum, moveNum, duration } = actualConfig
-      const totalLength = rowsData.length
+      a++
+      if (a > 26) return
+      const config = actualConfig.value
+      const { rowNum, moveNum, duration } = config
+      const totalLength = rowsData.value.length
       if (totalLength < rowNum) return
-      const index = currentIndex
-      const _rowsData = cloneDeep(rowsData)
-      // 将数据重新头尾连接
-      // 初始数据 [a,b,c,d,e,f,g]  index=1
-      // 改变后数据 [b,c,d,e,f,g,a]
-      // 由于头尾连接的时候，slice(0,0) 和slice(0,最后一位) 数据是相同的，造成闪动
-      const rows = _rowsData.slice(index) // [b,c,d,e,f,g]
+      const index = currentIndex.value
+      const _rowsData = cloneDeep(rowsData.value)
+      // 将数据重新头尾相连
+      const rows = _rowsData.slice(index)
       rows.push(..._rowsData.slice(0, index))
-      state.currentRowsData = rows
-      //! 动画
+      currentRowsData.value = rows
+      console.log(rows[0])
       // 先将所有行的高度还原
-      state.rowHeights = new Array(totalLength).fill(avgHeight)
-      // 设置间隔时间
+      rowHeights.value = new Array(totalLength).fill(avgHeight)
       const waitTime = 300
-      if (!state.isAnimationStart) return
-      await new Promise((resolve) => setTimeout(resolve, waitTime))
-
-      // 将moveNum的行高设置0
-      // [1,2,3,4,5].splice(0,2,..[0,0])
-      state.rowHeights.splice(0, moveNum, ...new Array(moveNum).fill(0))
-      state.currentIndex += moveNum
-      // 是否到达最后一组数据
-      const isLast = state.currentIndex - totalLength
-      // 到达最后一组数据，重置指针为剩余的index，因为moveNum可能是1,2,3...
-      if (isLast >= 0) {
-        state.currentIndex = isLast
+      if (isAnimationStop.value) {
+        return
       }
-      if (!state.isAnimationStart) return
-      // sleep
+      await new Promise((resolve) => setTimeout(resolve, waitTime))
+      // 将moveNum的行高度设置0
+      rowHeights.value.splice(0, moveNum, ...new Array(moveNum).fill(0))
+      currentIndex.value += moveNum
+      // 是否到达最后一组数据
+      const isLast = currentIndex.value - totalLength
+      if (isLast >= 0) {
+        currentIndex.value = isLast
+      }
+      if (isAnimationStop.value) {
+        return
+      }
       await new Promise((resolve) => setTimeout(resolve, duration - waitTime))
-      if (!state.isAnimationStart) return
-      // 延迟操作
+      if (isAnimationStop.value) {
+        return
+      }
       await startAnimation()
     }
     const stopAnimation = () => {
-      state.isAnimationStart = false
+      isAnimationStop.value = true
     }
     const update = () => {
       stopAnimation()
-      // 合并配置项
       const _actualConfig = assign(defaultConfig, props.config)
-      //行数据赋值
-      state.rowsData = _actualConfig.data || []
+      // 赋值rowsData
+      rowsData.value = _actualConfig.data || []
       handleHeader(_actualConfig)
       handleRows(_actualConfig)
-      state.actualConfig = _actualConfig
-      state.isAnimationStart = true
+      actualConfig.value = _actualConfig
       // 展示动画
+      isAnimationStop.value = false
       startAnimation()
     }
     watch(
       () => props.config,
       () => {
+        // console.log('watch!', props.config)
         update()
       },
     )
-
     return {
-      ...toRefs(state),
-      width,
+      id,
+      headerData,
+      headerStyle,
+      rowStyle,
+      aligns,
+      columnWidths,
+      rowHeights,
+      rowsData,
+      currentRowsData,
+      rowBg,
+      actualConfig,
       height,
     }
   },
@@ -319,7 +296,6 @@ export default {
   .base-scroll-list-header {
     display: flex;
     align-items: center;
-    font-size: 15px;
     .header-item {
     }
   }
@@ -328,7 +304,6 @@ export default {
     .base-scroll-list-rows {
       display: flex;
       align-items: center;
-      font-size: 28px;
       transition: all 0.3s linear;
       .base-scroll-list-columns {
         height: 100%;
