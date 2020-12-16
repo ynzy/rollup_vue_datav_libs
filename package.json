@@ -1,6 +1,6 @@
 {
   "name": "ynzy_datav_libs",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "main": "index.js",
   "license": "MIT",
   "module": "dist/datav.es.js",

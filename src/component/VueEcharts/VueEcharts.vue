@@ -1,20 +1,13 @@
 <!-- echarts二次封装 -->
 <template>
-<div :ref="refName" class="echarts"></div>
+  <!-- :ref="refName" -->
+  <div :id="refName" class="echarts"></div>
 </template>
 
 <script>
 import Echarts from 'echarts'
-import {
-  v4 as uuidv4
-} from 'uuid'
-import {
-  onMounted,
-  watch,
-  watchEffect,
-  ref,
-  getCurrentInstance
-} from 'vue'
+import { v4 as uuidv4 } from 'uuid'
+import { onMounted, watch, watchEffect, ref, getCurrentInstance } from 'vue'
 
 export default {
   name: 'VueEcharts',
@@ -30,7 +23,8 @@ export default {
     let instance
     const initChart = () => {
       if (!chart) {
-        dom = instance.ctx.$refs[refName]
+        // dom = instance.ctx.$refs[refName]
+        dom = document.getElementById(refName)
         chart = Echarts.init(dom, ctx.theme)
       }
       // console.log(ctx.options)

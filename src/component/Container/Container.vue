@@ -1,33 +1,23 @@
 <!--  -->
 <template>
-<div id="screen-container" :ref="refName">
-  <template v-if="ready">
-    <slot></slot>
-  </template>
-</div>
+  <!-- :ref="refName" -->
+  <div id="datav-container">
+    <template v-if="ready">
+      <slot></slot>
+    </template>
+  </div>
 </template>
 
 <script>
-import {
-  ref,
-  getCurrentInstance,
-  onMounted,
-  onUnmounted,
-  nextTick,
-  watchEffect,
-  reactive,
-  toRefs
-} from 'vue'
-import {
-  debounce
-} from '@/utils/index.js'
+import { ref, getCurrentInstance, onMounted, onUnmounted, nextTick, watchEffect, reactive, toRefs } from 'vue'
+import { debounce } from '@/utils/index.js'
 export default {
   name: 'Container',
   props: {
     options: Object, // width height
   },
   setup(ctx) {
-    const refName = 'screen-container'
+    // const refName = 'datav-container'
     const width = ref(0) //实际宽度
     const height = ref(0) //实际高度
     const originalWidth = ref(0) // 屏幕宽度
@@ -41,10 +31,9 @@ export default {
       return new Promise((resolve, reject) => {
         // nextTick 优化渲染
         nextTick(() => {
-          dom = context.$refs[refName]
-          const {
-            options
-          } = ctx
+          // dom = context.$refs[refName]
+          dom = document.querySelector('#datav-container')
+          const { options } = ctx
           // 获取设置的固定宽度。大屏的真实尺寸
           if (options?.width && options?.height) {
             width.value = options.width
@@ -128,7 +117,7 @@ export default {
     })
 
     return {
-      refName,
+      // refName,
       ready,
     }
   },
@@ -136,7 +125,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-#screen-container {
+#datav-container {
   position: fixed;
   top: 0;
   left: 0;

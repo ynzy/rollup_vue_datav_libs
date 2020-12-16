@@ -1,6 +1,7 @@
 <!--  -->
 <template>
-  <div class="fly_box" :ref="refName">
+  <!-- :ref="refName" -->
+  <div class="fly_box" :id="refName">
     <svg :width="width" :height="height">
       <defs>
         <path :id="pathId" :d="path" fill="none" />
@@ -65,7 +66,8 @@ export default {
     const init = () => {
       // 由于setup是在create之前执行的，无法获取到组件的实例，通过getCurrentInstance获取组件的实例
       const instance = getCurrentInstance()
-      const dom = instance.ctx.$refs[refName]
+      // const dom = instance.ctx.$refs[refName]
+      const dom = document.getElementById(refName)
       width.value = dom.clientWidth
       height.value = dom.clientHeight
     }
